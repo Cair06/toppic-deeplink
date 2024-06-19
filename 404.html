@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Page Not Found - Open App or Redirect to App Store</title>
+    <script>
+        function getLastPathSegment(url) {
+            var pathArray = url.split('/');
+            return pathArray[pathArray.length - 1] || pathArray[pathArray.length - 2];
+        }
+
+        function openAppOrRedirect() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Получаем последний сегмент пути из URL
+            var appId = getLastPathSegment(window.location.pathname);
+            if (!appId || isNaN(appId)) {
+                console.log("No valid ID found in the URL. Aborting...");
+                return; // Если id не найден, прерываем выполнение
+            }
+
+            // Define your app's URL scheme
+            var deepLink = 'PHOTOCHOOSER://POSTS/' + appId;
+            var appStoreURL = 'https://apps.apple.com/ru/app/id6468936583';
+
+            console.log("Trying to open app with deep link: " + deepLink);
+
+            // Open the deep link in a new window/tab
+            var newWindow = window.open(deepLink, '_blank');
+            var now = new Date().getTime();
+            var timeout = 1500;
+
+            setTimeout(function() {
+                var newTime = new Date().getTime();
+                if (newTime - now < timeout + 100) {
+                    // If the app is not installed, redirect to App Store in the same new window
+                    console.log("App is not installed, redirecting to App Store: " + appStoreURL);
+                    newWindow.location = appStoreURL;
+                } else {
+                    // Close the new window if the app opened successfully
+                    console.log("App opened successfully.");
+                    newWindow.close();
+                }
+            }, timeout);
+        }
+
+        window.onload = function() {
+            openAppOrRedirect();
+        };
+    </script>
+</head>
+<body>
+    <p>Checking for the app...</p>
+</body>
+</html>
