@@ -4,22 +4,19 @@
     <meta charset="UTF-8">
     <title>Open App or Redirect to App Store</title>
     <script>
-        function getParameterByName(name, url = window.location.href) {
-            name = name.replace(/[\[\]]/g, '\\$&');
-            let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        function getLastPathSegment(url) {
+            var pathArray = url.split('/');
+            return pathArray[pathArray.length - 1] || pathArray[pathArray.length - 2];
         }
 
         function openAppOrRedirect() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            // Получаем параметр id из URL
-            var appId = getParameterByName('id');
-            if (!appId) {
-                appId = 'default'; // Установите значение по умолчанию, если id не передан
+            // Получаем последний сегмент пути из URL
+            var appId = getLastPathSegment(window.location.pathname);
+            if (!appId || isNaN(appId)) {
+                console.log("No valid ID found in the URL. Aborting...");
+                return; // Если id не найден, прерываем выполнение
             }
 
             // Define your app's URL scheme
