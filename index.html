@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Open App or Redirect to App Store</title>
+    <script>
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        function openAppOrRedirect() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Получаем параметр id из URL
+            var appId = getParameterByName('id');
+            if (!appId) {
+                appId = 'default'; // Установите значение по умолчанию, если id не передан
+            }
+
+            // Define your app's URL scheme
+            var deepLink = 'myapp://' + appId;
+            var appStoreURL = 'https://apps.apple.com/app/idВАШ_ID_ПРИЛОЖЕНИЯ';
+
+            // Open the deep link in a new window/tab
+            var newWindow = window.open(deepLink, '_blank');
+            var now = new Date().getTime();
+            var timeout = 1500;
+
+            setTimeout(function() {
+                var newTime = new Date().getTime();
+                if (newTime - now < timeout + 100) {
+                    // If the app is not installed, redirect to App Store in the same new window
+                    newWindow.location = appStoreURL;
+                } else {
+                    // Close the new window if the app opened successfully
+                    newWindow.close();
+                }
+            }, timeout);
+        }
+
+        window.onload = function() {
+            openAppOrRedirect();
+        };
+    </script>
+</head>
+<body>
+    <p>Checking for the app...</p>
+</body>
+</html>
