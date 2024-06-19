@@ -12,6 +12,10 @@
         function openAppOrRedirect() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
+            // Определяем платформу
+            var isAndroid = /android/i.test(userAgent);
+            var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
             // Получаем последний сегмент пути из URL
             var appId = getLastPathSegment(window.location.pathname);
             if (!appId || isNaN(appId)) {
@@ -22,16 +26,24 @@
             // Define your app's URL scheme
             var deepLink = 'PHOTOCHOOSER://POSTS/' + appId;
             var appStoreURL = 'https://apps.apple.com/ru/app/id6468936583';
+            var playStoreURL = 'https://play.google.com/store/apps/details?id=com.yourapp.package';
 
             console.log("Trying to open app with deep link: " + deepLink);
 
             // Try opening the deep link
             window.location = deepLink;
 
-            // If the app is not installed, redirect to App Store after a short delay
+            // If the app is not installed, redirect to the appropriate store after a short delay
             setTimeout(function() {
-                console.log("App is not installed, redirecting to App Store: " + appStoreURL);
-                window.location = appStoreURL;
+                if (isIOS) {
+                    console.log("App is not installed, redirecting to App Store: " + appStoreURL);
+                    window.location = appStoreURL;
+                } else if (isAndroid) {
+                    console.log("App is not installed, redirecting to Play Store: " + playStoreURL);
+                    window.location = playStoreURL;
+                } else {
+                    console.log("Unsupported platform.");
+                }
             }, 2000); // Adjust the timeout if necessary
         }
 
